@@ -8,6 +8,7 @@ package config
 import (
 	"fmt"
 	"io"
+	"os"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -68,6 +69,10 @@ func ParseCloudConfig(configReader io.Reader) (*CloudConfig, error) {
 		return nil, fmt.Errorf("Unable to decode yaml file: [%v]", err)
 	}
 
+	config.VCD.User = os.Getenv("VCD_BASIC_AUTH_USERNAME")
+	config.VCD.Secret = os.Getenv("VCD_BASIC_AUTH_PASSWORD")
+	config.VCD.RefreshToken = os.Getenv("VCD_REFRESH_TOKEN")
+
 	return config, validateCloudConfig(config)
 }
 
@@ -79,6 +84,17 @@ func validateCloudConfig(config *CloudConfig) error {
 
 	if config.VCD.Host == "" {
 		return fmt.Errorf("need a valid vCloud Host")
+	}
+
+	if config.VCD.RefreshToken == "" {
+		if config.VCD.User == "" || config.VCD.Secret == "" {
+			return fmt.Errorf("credentials not passed correctly")
+		}
+	} else {
+		// if RefreshToken is passed, let's disallow other strings
+		if config.VCD.User != "" || config.VCD.Secret != "" {
+			return fmt.Errorf("credentials not passed correctly")
+		}
 	}
 
 	return nil

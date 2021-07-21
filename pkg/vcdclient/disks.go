@@ -202,7 +202,7 @@ func (client *Client) govcdGetDisksByName(diskName string, refresh bool) (*[]vcd
 	if refresh {
 		err := client.vdc.Refresh()
 		if err != nil {
-			return nil, fmt.Errorf("disk name should not be empty")
+			return nil, fmt.Errorf("unable to refresh vcd client: [%v]", err)
 		}
 	}
 	for _, resourceEntities := range client.vdc.Vdc.ResourceEntities {

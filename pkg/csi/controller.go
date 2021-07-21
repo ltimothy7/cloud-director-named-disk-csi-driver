@@ -115,7 +115,7 @@ func (cs *controllerServer) CreateVolume(ctx context.Context,
 	disk, err := cs.VCDClient.CreateDisk(diskName, sizeMB, busType,
 		busSubType, "", storageProfile, shareable)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create disk [%s] with sise [%d]MB: [%v]",
+		return nil, fmt.Errorf("unable to create disk [%s] with size [%d]MB: [%v]",
 			diskName, sizeMB, err)
 	}
 	klog.Infof("Successfully created disk [%s] of size [%d]MB", diskName, sizeMB)
