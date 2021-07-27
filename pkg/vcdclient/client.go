@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"sync"
 
+	swaggerClient "github.com/vmware/cloud-director-named-disk-csi-driver/pkg/vcdswaggerclient"
 	"github.com/vmware/go-vcloud-director/v2/govcd"
 	"k8s.io/klog"
 )
@@ -23,6 +24,7 @@ type Client struct {
 	vcdAuthConfig      *VCDAuthConfig
 	vcdClient          *govcd.VCDClient
 	vdc                *govcd.Vdc
+	apiClient          *swaggerClient.APIClient
 	ClusterID          string
 	rwLock             sync.RWMutex
 }
@@ -63,7 +65,6 @@ func (client *Client) RefreshToken() error {
 // NewVCDClientFromSecrets :
 func NewVCDClientFromSecrets(host string, orgName string, vdcName string,
 	user string, password string, insecure bool, clusterID string, getVdcClient bool) (*Client, error) {
-
 	// TODO: validation of parameters
 
 	clientCreatorLock.Lock()
@@ -84,7 +85,7 @@ func NewVCDClientFromSecrets(host string, orgName string, vdcName string,
 
 	vcdAuthConfig := NewVCDAuthConfigFromSecrets(host, user, password, orgName, insecure)
 
-	vcdClient, err := vcdAuthConfig.GetVCDClientFromSecrets()
+	vcdClient, apiClient, err := vcdAuthConfig.GetSwaggerClientFromSecrets()
 	if err != nil {
 		return nil, fmt.Errorf("unable to get swagger client from secrets: [%v]", err)
 	}
@@ -92,6 +93,7 @@ func NewVCDClientFromSecrets(host string, orgName string, vdcName string,
 	client := &Client{
 		vcdAuthConfig:    vcdAuthConfig,
 		vcdClient:        vcdClient,
+		apiClient:        apiClient,
 		ClusterID:        clusterID,
 	}
 

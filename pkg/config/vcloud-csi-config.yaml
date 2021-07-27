@@ -1,0 +1,6 @@
+vcd:
+  host: "https://bos1-vcloud-static-177-114.eng.vmware.com"
+  org: "tenant1"
+  vdc: "tenant1_ovdc"
+  user: "orgadminuser"
+  secret: "ca$hc0w"
